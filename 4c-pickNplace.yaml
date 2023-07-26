@@ -1,0 +1,254 @@
+#https://github.com/tsteffek/Ergogen-V4-Migration-Guide
+units:
+  kx: cx
+  ky: cy
+  px: 2
+  py: 2
+points:
+  key:
+    padding: cy
+    tags:
+      1u: true
+  zones:
+    matrix:
+      anchor:
+        rotate: 5
+      columns:
+        outer:
+            key:
+              column_net: P20
+        pinky:
+          key:
+            column_net: P19
+        ring:
+          key:
+            stagger: 5
+            column_net: P18
+        middle:
+          key:
+            stagger: 5
+            column_net: P15
+        index:
+          key:
+            stagger: -6
+            column_net: P14
+        inner:
+          key:
+            stagger: -2
+            column_net: P16
+      rows:
+        bottom:
+          row_net: P7
+        home:
+          row_net: P6
+        top:
+          row_net: P5
+        num:
+          row_net: P4
+    thumbfan:
+      anchor:
+        ref: matrix_inner_bottom
+        shift: [-20, -20]
+      columns:
+        near1:
+          key:
+            column_net: P20
+        near2:
+          key:
+            column_net: P19
+        home:
+          rows:
+            home:
+              column_net: P18
+            top:
+              column_net: P15
+              row_net: P3
+          key:
+            spread: 21.25
+            splay: -20
+            origin: [-28, -2]
+        far:
+          key:
+            column_net: P14
+            spread: 21.25
+            splay: -15
+            origin: [-11, -2]
+      rows:
+        home:
+          row_net: P3
+  mirror:
+    distance: 300
+      
+  rotate: -20
+outlines:
+    raw: 
+      - what: rectangle
+        #side: left
+        size: [kx + px, ky + py]
+        corner: px
+        where: true
+        
+        
+    patch_outer:
+      - what: polygon
+        fillet: 6.35
+        points:
+          - ref: matrix_outer_num
+            shift: [-14,20]
+          - ref: matrix_outer_num
+            shift: [133,20]
+          - ref: thumbfan_home_top
+            shift: [10,12]
+          - ref: thumbfan_far_home
+            shift: [12,20]
+          - ref: thumbfan_far_home
+            shift: [12.5,-11]
+          - ref: thumbfan_near2_home
+            shift: [7,-16]
+          - ref: thumbfan_near1_home
+            shift: [-13,-13]
+          - ref: thumbfan_near1_home
+            shift: [-13.5,3.5]
+          - ref: matrix_outer_bottom
+            shift: [-14,-15]
+
+    screw_holes:
+      - what: circle
+        adjust:
+            ref: matrix_outer_num
+            shift: [-0.4 cx, .85 cy]
+        radius: 1.05
+      - what: circle
+        adjust:
+            ref: matrix_inner_num
+            shift: [.33 cx, 0.75 cy]
+        radius: 1.05
+      - what: circle
+        adjust:
+            ref: matrix_outer_bottom
+            shift: [-.55 cx, -.635 cy]
+        radius: 1.05
+      - what: circle
+        adjust:
+            ref: matrix_inner_bottom
+            shift: [-.055 cx, -1.85 cy]
+        radius: 1.05
+      - what: circle
+        adjust:
+            ref: matrix_middle_bottom
+            shift: [.2 cx, -1.2 cy]
+        radius: 1.05
+      - what: circle
+        adjust:
+            ref: thumbfan_far_home
+            shift: [.4 cx, .96 cy]
+        radius: 1.05
+      
+        
+    
+        
+    keycap_outlines:
+      - what: rectangle
+        #side: left
+        size: [1cx - 0.5, 1cy - 0.5] # Choc keycaps are 17.5 x 16.5
+        bound: false    
+        #tags: [1u]       
+        where: true
+    keycap_outlines15:
+      - what: rectangle
+        #side: left
+        size: [1.5cx - 0.5, 1cy - 0.5] # Choc keycaps are 17.5 x 16.5
+        bound: false    
+        #tags: [15u]     
+        where: true  
+    preview:
+        main:
+          what: outline
+          name: patch_outer
+        switches:
+          what: outline
+          name: keycap_outlines
+          operation: subtract
+        holes:
+          what: outline
+          name: screw_holes
+          operation: subtract
+    pcb:
+        main:
+          what: outline
+          name: patch_outer
+        holes:
+          what: outline
+          name: screw_holes
+          operation: subtract
+pcbs:
+  top_plate:
+    outlines:
+      edge:
+        outline: preview 
+        layer: Edge.Cuts
+  board:
+    outlines:
+      edge:
+        outline: pcb
+        layer: Edge.Cuts
+    footprints:
+      choc_hotswap:
+        what: choc
+        where: true
+        params:
+          keycaps: true
+          reverse: false
+          hotswap: true
+          from: "{{colrow}}"
+          to: "{{column_net}}"
+      diode:
+        what: diode
+        where: true
+        params:
+          backOnly: true
+          from: "{{colrow}}"
+          to: "{{row_net}}"
+        adjust:
+          shift: [0, -5]
+      mcu_l:
+        what: promicro 
+        params:
+          orientation: down
+        adjust:
+          ref:
+            - matrix_inner_top
+          shift: [22, -9+1.5*cy]
+          rotate: 270
+      oled_l:
+        what: oled
+        adjust:
+          ref:
+            - matrix_inner_top
+          shift: [14.5, -30+1.5 cy]
+          rotate: 90
+        params:
+          CS: P1
+          SCL: P2
+          SDA: P0
+      jumper_r:
+        what: slider
+        adjust:
+          ref:
+            - matrix_inner_bottom
+          shift: [36.5, 0]
+          rotate: 270
+        params:
+          side: F
+          from: Bplus
+          to: RAW
+      batt_con:
+        what: jstph
+        adjust:
+          ref:
+            - matrix_inner_top
+          shift: [15, -8]
+          rotate: 90
+        params:
+          pos: Bplus
+          neg: GND
