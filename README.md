@@ -11,7 +11,7 @@ Read more about chocBoard on [compression](https://compressionkeyboards.com).
 feel free to dig around in my working files in the repo :) but if you just want to order a PCB or print a case, checkout the releases tab.
 
 ## TODO
-Fusion and STEP files will be added soon, I'm just cleaning them up a bit. Also, display cover files are not final, and will be tweaked in an upcoming release.
+Fusion and STEP files will be added soon, I'm just cleaning them up a bit. Also, display cover files are not final, and just a few dimensions will be tweaked in an upcoming release.
 
 
 ## LICENSE
